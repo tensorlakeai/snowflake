@@ -215,7 +215,7 @@ Build and deploy AI applications that process documents at scale without managin
 ## Documentation & Resources
 
 - [Full API Documentation](https://docs.tensorlake.ai)
-- [Snowflake Cortex AI Guide](https://docs.snowflake.com/guides/cortex)
+- [Snowflake Docs](https://docs.snowflake.com)
 
 ## Support
 

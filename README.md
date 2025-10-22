@@ -34,7 +34,7 @@ This repository demonstrates production-ready patterns for integrating **Tensorl
 ### Prerequisites
 
 - Snowflake account
-- Tensorlake API key ([get one here](https://tensorlake.ai))
+- Tensorlake API key ([get one here](https://cloud.tensorlake.ai))
 - Python 3.9+
 
 ### Installation

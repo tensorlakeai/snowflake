@@ -47,15 +47,6 @@ cd specific-example # e.g. sec-filings
 # Install dependencies
 pip install tensorlake snowflake-connector-python pandas numpy
 
-# Set local environment variables for local testing (optional)
-export TENSORLAKE_API_KEY="YOUR_TENSORLAKE_API_KEY"
-export SNOWFLAKE_ACCOUNT='YOUR_SNOWFLAKE_ACCOUNT'
-export SNOWFLAKE_USER='YOUR_SNOWFLAKE_USER'
-export SNOWFLAKE_PASSWORD='YOUR_SNOWFLAKE_PASSWORD'
-export SNOWFLAKE_WAREHOUSE='YOUR_SNOWFLAKE_WAREHOUSE'
-export SNOWFLAKE_DATABASE='YOUR_SNOWFLAKE_DATABASE'
-export SNOWFLAKE_SCHEMA='YOUR_SNOWFLAKE_SCHEMA'
-
 # Set Tensorlake Secrets for deployed Applications
 tensorlake secrets set TENSORLAKE_API_KEY="YOUR_TENSORLAKE_API_KEY"
 tensorlake secrets set SNOWFLAKE_ACCOUNT='YOUR_SNOWFLAKE_ACCOUNT'

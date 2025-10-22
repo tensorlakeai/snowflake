@@ -86,9 +86,6 @@ def document_ingestion(document_urls: List[str]) -> None:
             )
             parse_ids[file_url] = parse_id
             print(f"Successfully classified {file_url}: {parse_id}")
-
-            #parse_ids[file_url] = "parse_jCcDRb6zq6T8j6W9LMTN7"
-            #print(f"Successfully classified {file_url}")
         except Exception as e:
             print(f"Failed to classify document {file_url}: {e}")
     results = synchronize(map(extract_structured_data, parse_ids.items()))
@@ -120,7 +117,6 @@ def extract_structured_data(url_parse_id_pair: Tuple[str, str]) -> None:
     
     doc_ai = DocumentAI(api_key=os.getenv("TENSORLAKE_API_KEY"))
     result = doc_ai.wait_for_completion(parse_id=url_parse_id_pair[1])
-    #result = doc_ai.wait_for_completion(parse_id="parse_jCcDRb6zq6T8j6W9LMTN7")
     
     page_numbers = []
     for page_class in result.page_classes:
@@ -145,7 +141,6 @@ def extract_structured_data(url_parse_id_pair: Tuple[str, str]) -> None:
         ]
     )
     
-    #result = "parse_RCPnfHppLqm6dN6Qcbzdg"
     return write_to_snowflake(result, url_parse_id_pair[0])
 
 

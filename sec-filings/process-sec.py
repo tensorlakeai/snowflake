@@ -259,12 +259,6 @@ def write_to_snowflake(parse_id: str, file_url: str) -> None:
     # Convert columns to uppercase for Snowflake
     df_parent.columns = [col.upper() for col in df_parent.columns]
     
-    print("Connect to Snowflake")
-    print("Snowflake credentials:")
-    print("Account: ", os.getenv("SNOWFLAKE_ACCOUNT"))
-    print("User: ", os.getenv("SNOWFLAKE_USER"))
-    print("Password: ", os.getenv("SNOWFLAKE_PASSWORD"))
-    print("Warehouse: ", os.getenv("SNOWFLAKE_WAREHOUSE"))
     # Connect to Snowflake
     conn = snowflake.connector.connect(
                 account=os.getenv("SNOWFLAKE_ACCOUNT"),

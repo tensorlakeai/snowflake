@@ -6,9 +6,9 @@ from pydantic import BaseModel, Field
 import snowflake.connector
 from snowflake.connector.pandas_tools import write_pandas
 
-from tensorlake.applications import Image, application, function, cls, RequestError, map
+from tensorlake.applications import Image, application, function, cls, map
 from tensorlake.documentai import (
-    ChunkingStrategy, DocumentAI, ParsingOptions, PageClassConfig, 
+    DocumentAI, PageClassConfig, 
     ParseResult, StructuredExtractionOptions
 )
 
@@ -104,11 +104,7 @@ def synchronize(futures: List[Any]) -> List[Any]:
 @function(
     image=image, 
     secrets=[
-        "TENSORLAKE_API_KEY",
-        "SNOWFLAKE_ACCOUNT",
-        "SNOWFLAKE_USER",
-        "SNOWFLAKE_PASSWORD",
-        "SNOWFLAKE_WAREHOUSE"
+        "TENSORLAKE_API_KEY"
     ]
 )
 def extract_structured_data(url_parse_id_pair: Tuple[str, str]) -> None:
@@ -147,7 +143,6 @@ def extract_structured_data(url_parse_id_pair: Tuple[str, str]) -> None:
 @function(
     image=image, 
     secrets=[
-        "TENSORLAKE_API_KEY",
         "SNOWFLAKE_ACCOUNT",
         "SNOWFLAKE_USER",
         "SNOWFLAKE_PASSWORD",

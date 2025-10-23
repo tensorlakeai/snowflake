@@ -38,9 +38,9 @@ We present some blueprints for production ready patterns to integrate with Snowf
 
 <img width="1000" height="600" alt="Snowflake_DocIngestion_Diagram" src="https://github.com/user-attachments/assets/854a524b-a1fb-4ca8-8e37-eef785c73e6b"/>
 
-The Tensoralake application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
+The Tensoralake Application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
 
-The application is written in Python, without any external orchestration engines, so you can build and test it like any other normal application. You can use any OCR API in the application, or even run open source OCR models on GPUs by annotating the OCR function with a GPU enabled hardware resource. 
+The Application is written in Python, without any external orchestration engines, so you can build and test it like any other normal application. You can use any OCR API in the Application, or even run open source OCR models on GPUs by annotating the OCR function with a GPU enabled hardware resource. 
 
 Tensorlake automatically queues requests and scales out the cluster, there is no extra configuration required for handling spiky ingestion.
 
@@ -48,7 +48,15 @@ Try out the [code here](https://github.com/tensorlakeai/snowflake/tree/main/sec-
 
 ### Blueprint: Structured Data Extraction
 
-**Coming Soon**
+![Diagram of the Tensorlake Application that stores wikipedia pages in Snowflake for NLP querying with OpenAI.](./Snowflake_Wikipedia_Diagram.png)
+
+The Tensorlake Application receives natural language questions over HTTP, uses an LLM to identify relevant Wikipedia articles, fetches and parses the content, chunks it semantically, and stores it in your Snowflake database for building a persistent knowledge base. It then performs intelligent retrieval using vector similarity, semantic search, or keyword matching (depending on available Snowflake Cortex features), and generates accurate answers using RAG with OpenAI.
+
+The Application is written in pure Python with automatic function chaining - no external orchestration needed. It gracefully handles different Snowflake configurations, automatically falling back from advanced Cortex features to basic SQL when needed. Each query enriches your knowledge base, making future queries faster and more comprehensive.
+
+Tensorlake automatically manages the entire pipeline - from article fetching to answer generation - handling retries, state management, and scaling without any additional configuration. The application works both locally for testing and deploys instantly as a serverless API.
+
+Try out the [code here](./query-wikipedia).
 
 ### Blueprint: Document Indexing with Cortex
 

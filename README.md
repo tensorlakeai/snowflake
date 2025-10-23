@@ -26,6 +26,18 @@ Tensorlake's applications automatically behave like durable queues so you wouldn
   - [Document Ingestion Pipeline](#blueprint-document-ingestion-pipeline)
   - [Structured Data Extraction](#blueprint-structured-data-extraction) (*coming soon*)
   - [Document Indexing with Cortex](#blueprint-document-indexing-with-cortex) (*coming soon*)
+- [Quick Overview: Tensorlake Applications](#quick-overview-tensorlake-applications)
+  - [Prerequisites](#Prerequisites)
+  - [Installation](#installation)
+  - [Defining an image](#defining-an-image)
+  - [Entrypoint function](#entrypoint-function)
+  - [Image and secrets](#image-and-secrets)
+  - [Deploy your Application](#deploy-your-application)
+  - [Trigger your Application](#trigger-your-application)
+- [Why This Integration Matters](#why-this-integration-matters)
+- [Security and Compliance](#security-and-compliance)
+- [Document and Resources](#documentation-and-resources)
+- [Support](#support)
 
 ## Use Cases
 
@@ -92,7 +104,7 @@ image = (
 )
 ```
 
-### Entrypoint Function
+### Entrypoint function
 Your entrypoint function is defined by the `@application()` decorator. This decorator tells the Tensorlake platform which function starts the application. The entrypoint function name is also the name of the Application. For example, when deployed, this Application will be called `document_ingestion`:
 ```python
 # Specify the entry point to the application
@@ -102,7 +114,7 @@ def document_ingestion(document_url:str) -> None:
     # Some code
 ```
 
-### Image and Secrets
+### Image and secrets
 Each function that is part of your Application needs to have a `function()` decorator. The `function()` decorator can accepts two parameters: `secrets` and `image`.
 
 ```python
@@ -168,14 +180,14 @@ Build and deploy AI applications that process documents at scale without managin
 - **Zero-ETL architecture**: Process documents where your data lives
 - **Enterprise governance**: Row-level security, data lineage, and compliance built-in
 
-## Security & Compliance
+## Security and Compliance
 
 - **SOC 2 Type II** certified infrastructure
 - **HIPAA/GDPR** compliant processing
 - **Row-level security** in Snowflake
 - **Audit logging** for all operations
 
-## Documentation & Resources
+## Documentation and Resources
 
 - [Full API Documentation](https://docs.tensorlake.ai)
 - [Snowflake Docs](https://docs.snowflake.com)

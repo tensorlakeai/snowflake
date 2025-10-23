@@ -31,7 +31,7 @@ We present some blueprints for production ready patterns to integrate with Snowf
 
 The Tensoralake application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
 
-The application in written in Python, without any external orchestration engines, so you can build and test it like any other normal application. You can use any OCR API in the application, or even run open source OCR models on GPUs by annotating the OCR function with a GPU enabled hardware resource. 
+The application is written in Python, without any external orchestration engines, so you can build and test it like any other normal application. You can use any OCR API in the application, or even run open source OCR models on GPUs by annotating the OCR function with a GPU enabled hardware resource. 
 
 Tensorlake automatically queues requests and scales out the cluster, there is no extra configuration required for handling spiky ingestion.
 

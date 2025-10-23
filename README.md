@@ -156,29 +156,7 @@ While Snowflake excels at structured data and offers powerful AI through Cortex,
 
 - **Serverless AI Applications** that deploy instantly and scale automatically
 - **Layout-aware document understanding** preserving tables and semantic structure
-- **Dynamic model orchestration** adapting to document complexity in real-time
-
-### Tensorlake Applications - Serverless Document AI Platform
-Build and deploy AI applications that process documents at scale without managing infrastructure:
-
-- **Instant deployment**: From code to production in seconds
-- **Auto-scaling**: Handles 0 to millions of documents automatically  
-- **Built-in orchestration**: Parallel processing, retries, monitoring included
-- **Easy Snowflake integration**: Read/write data without complex ETL
-- **Pay-per-use**: No idle costs, scales to zero when not in use
-
-### Tensorlake's Document Intelligence
-- **99.5% extraction accuracy** on complex financial documents, ACORD forms, and regulatory filings
-- **Adaptive processing pipeline** switches between OCR, table recognition, and layout models dynamically
-- **Preserves document semantics**: headers, tables, footnotes, strikethroughs remain contextually linked
-- **Handles 50+ languages** with boundary-preserving multilingual NLP
-
-### Snowflake's AI Infrastructure
-- **Native VECTOR data type** with hardware-optimized similarity search
-- **Cortex Search**: Hybrid keyword + vector search with automatic reranking
-- **Cortex LLM Functions**: Direct SQL access to state-of-the-art models
-- **Zero-ETL architecture**: Process documents where your data lives
-- **Enterprise governance**: Row-level security, data lineage, and compliance built-in
+- **Dynamic model orchestration** adapting to data complexity in real-time
 
 ## Security and Compliance
 

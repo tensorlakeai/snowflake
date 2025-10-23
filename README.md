@@ -35,6 +35,8 @@ The application in written in Python, without any external orchestration engines
 
 Tensorlake automatically queues requests and scales out the cluster, there is no extra configuration required for handling spiky ingestion.
 
+[Code](https://github.com/tensorlakeai/snowflake/tree/main/sec-filings)
+
 
 ### Blueprint: Structured Data Extraction
 

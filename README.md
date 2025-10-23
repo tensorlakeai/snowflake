@@ -15,9 +15,30 @@
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" />
 </p>
 
-## Transform Unstructured Documents into AI-Ready Intelligence at Scale
+## Transform Unstructured Data into Queryable and AI Ready Data on Snowflake
 
-This repository demonstrates production-ready patterns for integrating **Tensorlake's advanced document processing and serverless AI applications** with **Snowflake's AI Data Cloud**, enabling you to build powerful RAG applications, intelligent document workflows, and deploy AI-powered document processing apps—all within Snowflake's secure, scalable environment.
+Tensorlake lets build serverless applications, pipelines agents in Python that can ingest and transform unstructured data before landing them in Snowflake's SQL database or Cortex Search Engine. This is an alternative to perform ETL orchestration with SQL expressions and UDF functions. 
+
+Tensorlake's applications automatically behave like durable queues so you wouldn't need to setup Kafka or other queues to manage ingestion. The clusters automatically scales up as data is ingested to process them.
+
+### Use Cases
+
+We present some blueprints for production ready patterns to integrate with Snowflake and code that you can deploy under 2 minutes and expereince the integration.
+
+### Blueprint: Document Ingestion Pipeline
+
+<img width="1576" height="552" alt="image" src="https://github.com/user-attachments/assets/128ec329-8bf8-4b64-b6d7-85462c2a9295" />
+
+The Tensoralake application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
+
+The application in written in Python, without any external orchestration engines, so you can build and test it like any other normal application. You can use any OCR API in the application, or even run open source OCR models on GPUs by annotating the OCR function with a GPU enabled hardware resource. 
+
+Tensorlake automatically queues requests and scales out the cluster, there is no extra configuration required for handling spiky ingestion.
+
+
+### Blueprint: Structured Data Extraction
+
+### Blueprint: Document Indexing with Cortex
 
 ### Table of Contents
 - [Quick Start](#quick-start-tensorlake-applications---serverless-ai-apps-in-minutes)

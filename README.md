@@ -21,13 +21,31 @@ Tensorlake is a serverless platform for building data applications and agents in
 
 Tensorlake's applications automatically behave like durable queues so you wouldn't need to setup Kafka or other queues to manage ingestion. The clusters automatically scales up as data is ingested to process them.
 
-### Use Cases
+## Table of Contents
+- [Example Use Cases](#use-cases)
+  - [Document Ingestion Pipeline](#blueprint-document-ingestion-pipeline)
+  - [Structured Data Extraction](#blueprint-structured-data-extraction) (*coming soon*)
+  - [Document Indexing with Cortex](#blueprint-document-indexing-with-cortex) (*coming soon*)
+- [Quick Overview: Tensorlake Applications](#quick-overview-tensorlake-applications)
+  - [Prerequisites](#Prerequisites)
+  - [Installation](#installation)
+  - [Defining an image](#defining-an-image)
+  - [Entrypoint function](#entrypoint-function)
+  - [Image and secrets](#image-and-secrets)
+  - [Deploy your Application](#deploy-your-application)
+  - [Trigger your Application](#trigger-your-application)
+- [Why This Integration Matters](#why-this-integration-matters)
+- [Security and Compliance](#security-and-compliance)
+- [Document and Resources](#documentation-and-resources)
+- [Support](#support)
+
+## Use Cases
 
 We present some blueprints for production ready patterns to integrate with Snowflake and code that you can deploy under 2 minutes and expereince the integration.
 
 ### Blueprint: Document Ingestion Pipeline
 
-<img width="1576" height="552" alt="image" src="https://github.com/user-attachments/assets/128ec329-8bf8-4b64-b6d7-85462c2a9295" />
+<img width="1000" height="600" alt="Snowflake_DocIngestion_Diagram" src="https://github.com/user-attachments/assets/519d4c35-3ddc-4a85-b44e-1d155584869d" />
 
 The Tensoralake application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
 
@@ -35,24 +53,19 @@ The application is written in Python, without any external orchestration engines
 
 Tensorlake automatically queues requests and scales out the cluster, there is no extra configuration required for handling spiky ingestion.
 
-[Code](https://github.com/tensorlakeai/snowflake/tree/main/sec-filings)
-
+Try out the [code here](https://github.com/tensorlakeai/snowflake/tree/main/sec-filings).
 
 ### Blueprint: Structured Data Extraction
 
+**Coming Soon**
+
 ### Blueprint: Document Indexing with Cortex
 
-### Table of Contents
-- [Quick Start](#quick-start-tensorlake-applications---serverless-ai-apps-in-minutes)
-- [Why this integration matters](#why-this-integration-matters)
-- [Key Technical Advantages](#key-technical-advantages)
-- [Security and Compliance](#security--compliance)
-- [Documentation and Resource](#documentation--resources)
-- [Support](#support)
+**Coming Soon**
 
-## Quick Start: Tensorlake Applications - Serverless AI Apps in Minutes
+## Quick Overview: Tensorlake Applications
 
-**Build and deploy production AI applications that process documents at scale, no infrastructure required.** Tensorlake Applications provide a complete serverless platform for creating data-centric AI apps that integrate seamlessly with Snowflake.
+For more complete documention on the Tensorlake Platform (including serverless Applications and Document AI), visit the [Tensorlake docs](https://docs.tensorlake.ai).
 
 ### Prerequisites
 
@@ -62,16 +75,16 @@ Tensorlake automatically queues requests and scales out the cluster, there is no
 
 ### Installation
 
+Integrating Snowflake into a Tensorlake Application is easy. To get started, install the Tensorlake SDK:
+
 ```bash
-# Clone the repository
-git clone https://github.com/tensorlakeai/snowflake
-cd specific-example # e.g. sec-filings
+# Install the Tensorlake SDK
+pip install tensorlake
+```
 
-# Install dependencies
-pip install tensorlake snowflake-connector-python pandas numpy
-
+Then, store your Snowflake secrets on the Tensorlake platform:
+```bash
 # Set Tensorlake Secrets for deployed Applications
-tensorlake secrets set TENSORLAKE_API_KEY="YOUR_TENSORLAKE_API_KEY"
 tensorlake secrets set SNOWFLAKE_ACCOUNT='YOUR_SNOWFLAKE_ACCOUNT'
 tensorlake secrets set SNOWFLAKE_USER='YOUR_SNOWFLAKE_USER'
 tensorlake secrets set SNOWFLAKE_PASSWORD='YOUR_SNOWFLAKE_PASSWORD'
@@ -80,22 +93,35 @@ tensorlake secrets set SNOWFLAKE_DATABASE='YOUR_SNOWFLAKE_DATABASE'
 tensorlake secrets set SNOWFLAKE_SCHEMA='YOUR_SNOWFLAKE_SCHEMA'
 ```
 
-### Example Application
-*Note: This is psuedo code. To try out a fully functional example, explore [sec-filings](./sec-filings).*
+### Defining an image
 
+Define an image to ensure your Application has access to the libraries it needs to complete the task.
 ```python
 # Define the image for the application
 image = (
     Image(base_image="python:3.11-slim", name="snowflake-sec")
     .run("pip install snowflake-connector-python pandas pyarrow")
 )
+```
 
+### Entrypoint function
+Your entrypoint function is defined by the `@application()` decorator. This decorator tells the Tensorlake platform which function starts the application. The entrypoint function name is also the name of the Application. For example, when deployed, this Application will be called `document_ingestion`:
+```python
 # Specify the entry point to the application
+@application()
+@function()
+def document_ingestion(document_url:str) -> None:
+    # Some code
+```
+
+### Image and secrets
+Each function that is part of your Application needs to have a `function()` decorator. The `function()` decorator can accepts two parameters: `secrets` and `image`.
+
+```python
 # Specify any secrets needed for this funciton
 # Specify the image needed for this funciton
-@application()
 @function(
-    secrets=[
+  secrets=[
         "TENSORLAKE_API_KEY",
         "SNOWFLAKE_ACCOUNT",
         "SNOWFLAKE_USER", 
@@ -104,88 +130,25 @@ image = (
     ], 
     image=image
 )
-def document_ingestion(document_url:str) -> None:
-    """Main entry point for document processing pipeline"""
-    doc_ai = DocumentAI(api_key=os.getenv("TENSORLAKE_API_KEY"))
-
-    # Classify pages that reference AI risks
-    parse_id = doc_ai.classify(file_url, page_classifications)
-
-    return extract_structured_data((file_url, parse_id))
-
-@function(
-    image=image, 
-    secrets=[
-        "TENSORLAKE_API_KEY",
-        "SNOWFLAKE_ACCOUNT",
-        "SNOWFLAKE_USER",
-        "SNOWFLAKE_PASSWORD",
-        "SNOWFLAKE_WAREHOUSE"
-    ]
-)
-def extract_structured_data(url_page_numbers_pair: Tuple[str, str]) -> None:
-    """Extract structured data from classified pages"""
-    doc_ai = DocumentAI(api_key=os.getenv("TENSORLAKE_API_KEY"))
-    page_classes = doc_ai.wait_for_completion(parse_id=url_page_numbers_pair[1]).page_classes
-
-    # Extract AI risk mentions only from pages that mention AI risks
-    result = doc_ai.extract(
-        file_url=url_page_numbers_pair[0],
-        page_range=page_classes,
-        structured_extraction_options=[
-            StructuredExtractionOptions(
-                schema_name="AIRiskExtraction", 
-                json_schema=AIRiskExtraction 
-            )
-        ]
-    )
-    
-    return write_to_snowflake(result, url_parse_id_pair[0])
-
-@function(
-    image=image, 
-    secrets=[
-        "TENSORLAKE_API_KEY",
-        "SNOWFLAKE_ACCOUNT",
-        "SNOWFLAKE_USER",
-        "SNOWFLAKE_PASSWORD",
-        "SNOWFLAKE_WAREHOUSE",
-        "SNOWFLAKE_DATABASE",
-        "SNOWFLAKE_SCHEMA"
-    ]
-)
-def write_to_snowflake(parse_id: str, file_url: str) -> None:
-    """Write extracted data to Snowflake"""
-    import pandas as pd
-
-    # Get the extracted data from Tensorlake
-    doc_ai = DocumentAI(api_key=os.getenv("TENSORLAKE_API_KEY"))
-    result: ParseResult = doc_ai.get_parsed_results(parse_id)
-
-    # Connect to Snowflake
-    conn = snowflake.connector.connect(
-                account=os.getenv("SNOWFLAKE_ACCOUNT"),
-                user=os.getenv("SNOWFLAKE_USER"),
-                password=os.getenv("SNOWFLAKE_PASSWORD"),
-                warehouse=os.getenv("SNOWFLAKE_WAREHOUSE")
-    )
-    cursor = conn.cursor()
-
-    # Write data to Snowflake
-    try:
-        cursor.execute(f"USE DATABASE {os.getenv('SNOWFLAKE_DATABASE')}")
-        cursor.execute(f"USE SCHEMA {os.getenv('SNOWFLAKE_SCHEMA')}")
-        
-        # Write parent table
-        write_pandas(conn, df_parent, 'AI_RISK_FILINGS')
-        
-    finally:
-        cursor.close()
-        conn.close()
+def write_to_snowflake(parse_id:str) -> None:
+  # Some code
 ```
 
-- Deploy with one command: `tensorlake deploy process-sec.py`
-- Instantly hit the HTTP endpoint: `https://api.tensorlake.ai/applications/document-ingestion`
+### Deploy your Application
+
+Once you have written your application, you can deploy it with the Tensorlake `deploy` CLI command:
+
+```bash
+tensorlake deploy document-infestion.py
+```
+
+### Trigger your Application
+
+Once deployed, you can trigger your application by posting to the HTTP endpoint. For example, for the example Application above, you would post to:
+
+```bash
+https://api.tensorlake.ai/applications/document-ingestion
+```
 
 ## Why This Integration Matters
 
@@ -193,40 +156,16 @@ While Snowflake excels at structured data and offers powerful AI through Cortex,
 
 - **Serverless AI Applications** that deploy instantly and scale automatically
 - **Layout-aware document understanding** preserving tables and semantic structure
-- **Dynamic model orchestration** adapting to document complexity in real-time
+- **Dynamic model orchestration** adapting to data complexity in real-time
 
-## Key Technical Advantages
-
-### Tensorlake Applications - Serverless Document AI Platform
-Build and deploy AI applications that process documents at scale without managing infrastructure:
-
-- **Instant deployment**: From code to production in seconds
-- **Auto-scaling**: Handles 0 to millions of documents automatically  
-- **Built-in orchestration**: Parallel processing, retries, monitoring included
-- **Easy Snowflake integration**: Read/write data without complex ETL
-- **Pay-per-use**: No idle costs, scales to zero when not in use
-
-### Tensorlake's Document Intelligence
-- **99.5% extraction accuracy** on complex financial documents, ACORD forms, and regulatory filings
-- **Adaptive processing pipeline** switches between OCR, table recognition, and layout models dynamically
-- **Preserves document semantics**: headers, tables, footnotes, strikethroughs remain contextually linked
-- **Handles 50+ languages** with boundary-preserving multilingual NLP
-
-### Snowflake's AI Infrastructure
-- **Native VECTOR data type** with hardware-optimized similarity search
-- **Cortex Search**: Hybrid keyword + vector search with automatic reranking
-- **Cortex LLM Functions**: Direct SQL access to state-of-the-art models
-- **Zero-ETL architecture**: Process documents where your data lives
-- **Enterprise governance**: Row-level security, data lineage, and compliance built-in
-
-## Security & Compliance
+## Security and Compliance
 
 - **SOC 2 Type II** certified infrastructure
 - **HIPAA/GDPR** compliant processing
 - **Row-level security** in Snowflake
 - **Audit logging** for all operations
 
-## Documentation & Resources
+## Documentation and Resources
 
 - [Full API Documentation](https://docs.tensorlake.ai)
 - [Snowflake Docs](https://docs.snowflake.com)

@@ -27,17 +27,8 @@ Tensorlake's applications automatically behave like durable queues so you wouldn
   - [Structured Data Extraction](#blueprint-structured-data-extraction) (*coming soon*)
   - [Document Indexing with Cortex](#blueprint-document-indexing-with-cortex) (*coming soon*)
 - [Quick Overview: Tensorlake Applications](#quick-overview-tensorlake-applications)
-  - [Prerequisites](#Prerequisites)
-  - [Installation](#installation)
-  - [Defining an image](#defining-an-image)
-  - [Entrypoint function](#entrypoint-function)
-  - [Image and secrets](#image-and-secrets)
-  - [Deploy your Application](#deploy-your-application)
-  - [Trigger your Application](#trigger-your-application)
 - [Why This Integration Matters](#why-this-integration-matters)
-- [Security and Compliance](#security-and-compliance)
-- [Document and Resources](#documentation-and-resources)
-- [Support](#support)
+- [Resources](#resources)
 
 ## Use Cases
 
@@ -45,7 +36,7 @@ We present some blueprints for production ready patterns to integrate with Snowf
 
 ### Blueprint: Document Ingestion Pipeline
 
-<img width="1000" height="600" alt="Snowflake_DocIngestion_Diagram" src="https://github.com/user-attachments/assets/519d4c35-3ddc-4a85-b44e-1d155584869d" />
+<img width="1000" height="600" alt="Snowflake_DocIngestion_Diagram" src="https://github.com/user-attachments/assets/854a524b-a1fb-4ca8-8e37-eef785c73e6b"/>
 
 The Tensoralake application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
 
@@ -144,33 +135,47 @@ tensorlake deploy document-infestion.py
 
 ### Trigger your Application
 
-Once deployed, you can trigger your application by posting to the HTTP endpoint. For example, for the example Application above, you would post to:
+Once deployed, you can trigger your application by posting to the HTTP endpoint. With Tensorlake's auto-scaling platform you can make 100,000s of requests and Tensorlake will automatically scale to handle them all, then automatically scale back. 
 
 ```bash
-https://api.tensorlake.ai/applications/document-ingestion
+# Basic curl request to Tensorlake application endpoint
+curl -X POST https://api.tensorlake.ai/applications/document-ingestion \
+  -H "Authorization: Bearer YOUR_TENSORLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/document.pdf"
+  }'
 ```
 
 ## Why This Integration Matters
 
-While Snowflake excels at structured data and offers powerful AI through Cortex, **enterprise knowledge remains trapped in complex documents**. Tensorlake bridges this gap with:
+### Beyond Traditional ETL: Serverless Data Applications
+Tensorlake is a complete serverless application platform that revolutionizes complex ETL:
+- **Replace Complex ETL Stacks**: No more Airflow, Kafka, or queue management. Tensorlake applications automatically behave like durable queues with built-in orchestration
+- **Python-Native Development**: Build data applications in pure Python instead of wrestling with SQL expressions and UDFs
+- **Auto-Scaling Infrastructure**: Clusters automatically scale from 0 to thousands of workers as data flows increase
+- **Direct Snowflake Integration**: Land processed data directly into Snowflake tables or Cortex Search without intermediate storage
 
-- **Serverless AI Applications** that deploy instantly and scale automatically
-- **Layout-aware document understanding** preserving tables and semantic structure
-- **Dynamic model orchestration** adapting to data complexity in real-time
+### Intelligent Data Processing at Scale
+As part of the Tensorlake platform, you also get comprehensive data processing, extraction, and ingestion out of the box:
+- **Multi-Modal Data Handling**: Process documents, images, presentations, spreadsheets, and raw text in unified workflows
+- **Adaptive Processing**: Dynamic model orchestration that adapts to data complexity in real-time
+- **Layout-Aware Understanding**: Preserves document structure, tables, and semantic relationships
+- **Guaranteed Processing**: Durable execution ensures every piece of data is processed without drops or failures
 
-## Security and Compliance
+## Resources
+
+- [Full API Documentation](https://docs.tensorlake.ai)
+- [Snowflake Docs](https://docs.snowflake.com)
+
+### Security and Compliance
 
 - **SOC 2 Type II** certified infrastructure
 - **HIPAA/GDPR** compliant processing
 - **Row-level security** in Snowflake
 - **Audit logging** for all operations
 
-## Documentation and Resources
-
-- [Full API Documentation](https://docs.tensorlake.ai)
-- [Snowflake Docs](https://docs.snowflake.com)
-
-## Support
+### Support
 
 - **Tensorlake Slack**: [Join our community](https://tlake.link/slack)
 - **GitHub Issues**: [Report bugs or request features](https://github.com/tensorlakeai/snowflake/issues)

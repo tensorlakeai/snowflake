@@ -48,27 +48,15 @@ Try out the [code here](https://github.com/tensorlakeai/snowflake/tree/main/sec-
 
 ### Blueprint: Structured Data Extraction
 
-![Diagram of the Tensorlake Application that stores wikipedia pages in Snowflake for NLP querying with OpenAI.](./query-wikipedia/Snowflake_Wikipedia_Diagram.png)
+![Diagram of the Wikipedia knowledge base system with Tensorlake extraction and Streamlit querying.](./query-wikipedia/Snowflake_Wikipedia_Diagram.png)
 
-The Tensorlake application orchestrates an intelligent Wikipedia Q&A system by combining best-in-class AI services. When you send a natural language question over HTTP, it uses OpenAI GPT-4 to identify the most relevant Wikipedia article, fetches the content, and then leverages Tensorlake DocumentAI to intelligently parse and chunk the text while preserving semantic structure. The chunks are stored in your Snowflake database where they build a persistent, searchable knowledge base. 
+This solution combines a Tensorlake serverless extraction application with a Streamlit interactive query interface to create an intelligent Wikipedia knowledge base. The Tensorlake application (`extract-wikipedia`) accepts a page type (like "actors"), uses BeautifulSoup and Requests to crawl Wikipedia pages, then leverages LangChain with OpenAI to intelligently parse HTML, chunk content, and extract structured information (birth dates, career highlights, key events). Everything is stored in Snowflake with both structured data tables and text embeddings.
 
-For retrieval, the system uses Snowflake Cortex Search when available (or falls back to SQL text search), finding the most relevant chunks for your query. Finally, it sends the retrieved context to OpenAI GPT-4 to generate an accurate, contextual answer. This creates a powerful RAG system that combines Tensorlake's document intelligence, Snowflake's scalable search, and OpenAI's language understanding.
+The Streamlit application (`query-wikipedia`) provides an interactive UI for querying this knowledge base. It orchestrates a sophisticated two-phase search using Snowflake Cortex - first querying structured data, then using those results as filters for semantic search through text embeddings. This hybrid approach delivers highly relevant results that OpenAI GPT-4 transforms into natural language answers.
 
-The application is written in pure Python with Tensorlake's automatic function orchestration - no Airflow, no Kafka, no complex infrastructure needed. Each component handles its specialized task: Tensorlake for document processing, Snowflake for storage and search, OpenAI for language understanding. The system gracefully degrades when advanced features aren't available and automatically scales with Tensorlake's serverless infrastructure.
+The Tensorlake extraction app runs serverlessly with automatic orchestration - no infrastructure management needed. The Streamlit app provides a user-friendly interface that data teams can customize and extend. Together, they create a powerful system where Tensorlake handles the heavy lifting of data extraction while Streamlit delivers an elegant query experience.
 
 Try out the [code here](./query-wikipedia).
-
-### Blueprint: Document Indexing with Cortex
-
-![A diagram of the pipeline for this Application](./document-qa/Snowflake_DocQA_Diagram.png)
-
-The Tensorlake application orchestrates a streamlined document Q&A system powered entirely by Snowflake Cortex for document processing. When you send a document URL and question over HTTP, the application fetches the document and leverages Snowflake Cortex's native capabilities: PARSE_DOCUMENT extracts text and structure from PDFs and other formats, while SPLIT_TEXT_RECURSIVE_CHARACTER creates intelligent chunks that preserve semantic meaning.
-
-These chunks are stored directly in Snowflake where Cortex Search automatically builds hybrid search indexes combining keyword and semantic understanding. When you ask a question, Cortex Search retrieves the most relevant sections using its advanced retrieval algorithms. The retrieved context is then sent to OpenAI GPT-4, which generates precise, contextual answers grounded in the document content.
-
-This architecture keeps all data processing within Snowflake, minimizing data movement and maximizing security. Tensorlake's serverless platform handles the orchestration without any infrastructure management - no queues, no complex ETL, just pure Python functions that scale automatically. The combination of Snowflake Cortex's native document capabilities and OpenAI's language understanding creates a production-ready Q&A system that processes any document and answers any question, all while keeping your data secure within Snowflake's governed environment.
-
-Try out the [code here](./document-qa).
 
 ## Quick Overview: Tensorlake Applications
 

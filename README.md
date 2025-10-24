@@ -36,7 +36,7 @@ We present some blueprints for production ready patterns to integrate with Snowf
 
 ### Blueprint: Document Ingestion Pipeline
 
-<img width="1000" height="600" alt="Snowflake_DocIngestion_Diagram" src="https://github.com/user-attachments/assets/854a524b-a1fb-4ca8-8e37-eef785c73e6b"/>
+![A diagram showing the pipeline for this Application](./sec-filings/Snowflake_SECFilings_Diagram.png)
 
 The Tensoralake Application receives Document URLs over HTTP, uses an OCR API to parse the document, calls an LLM for structured extraction, and then uses Snowflake's JDBC driver to write structured data into your Snowflake Database. Once it's inside Snowflake you can do all sorts of analytics on the data. 
 
@@ -59,6 +59,8 @@ The application is written in pure Python with Tensorlake's automatic function o
 Try out the [code here](./query-wikipedia).
 
 ### Blueprint: Document Indexing with Cortex
+
+![A diagram of the pipeline for this Application](./document-qa/Snowflake_DocQA_Diagram.png)
 
 The Tensorlake application orchestrates a streamlined document Q&A system powered entirely by Snowflake Cortex for document processing. When you send a document URL and question over HTTP, the application fetches the document and leverages Snowflake Cortex's native capabilities: PARSE_DOCUMENT extracts text and structure from PDFs and other formats, while SPLIT_TEXT_RECURSIVE_CHARACTER creates intelligent chunks that preserve semantic meaning.
 

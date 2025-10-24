@@ -24,8 +24,7 @@ Tensorlake's applications automatically behave like durable queues so you wouldn
 ## Table of Contents
 - [Example Use Cases](#use-cases)
   - [Document Ingestion Pipeline](#blueprint-document-ingestion-pipeline)
-  - [Structured Data Extraction](#blueprint-structured-data-extraction) (*coming soon*)
-  - [Document Indexing with Cortex](#blueprint-document-indexing-with-cortex) (*coming soon*)
+  - [Structured Data Extraction](#blueprint-structured-data-extraction)
 - [Quick Overview: Tensorlake Applications](#quick-overview-tensorlake-applications)
 - [Why This Integration Matters](#why-this-integration-matters)
 - [Resources](#resources)

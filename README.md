@@ -48,13 +48,13 @@ Try out the [code here](https://github.com/tensorlakeai/snowflake/tree/main/sec-
 
 ### Blueprint: Structured Data Extraction
 
-![Diagram of the Tensorlake Application that stores wikipedia pages in Snowflake for NLP querying with OpenAI.](./query-wikipedia/Snowflake_Wikipedia_Diagram.png)
+![Diagram of the Wikipedia knowledge base system with Tensorlake extraction and Streamlit querying.](./query-wikipedia/Snowflake_Wikipedia_Diagram.png)
 
-The Tensorlake applications create an intelligent Wikipedia knowledge base through a two-stage pipeline. The first application (`extract-wikipedia`) accepts a page type (like "actors"), uses BeautifulSoup and Requests to crawl relevant Wikipedia pages, then leverages Tensorlake DocumentAI to parse HTML and extract structured information (birth dates, career highlights, key events) alongside textual summaries. Everything is stored in Snowflake with both structured data tables and text embeddings.
+This solution combines a Tensorlake serverless extraction application with a Streamlit interactive query interface to create an intelligent Wikipedia knowledge base. The Tensorlake application (`extract-wikipedia`) accepts a page type (like "actors"), uses BeautifulSoup and Requests to crawl Wikipedia pages, then leverages LangChain with OpenAI to intelligently parse HTML, chunk content, and extract structured information (birth dates, career highlights, key events). Everything is stored in Snowflake with both structured data tables and text embeddings.
 
-The second application (`query-wikipedia`) accepts natural language queries and orchestrates a sophisticated two-phase search. First, it queries the structured data using Snowflake Cortex, then uses those results as filters for semantic search through text embeddings. This hybrid approach - filtering by facts then searching by meaning - delivers highly relevant results. Finally, OpenAI GPT-4 generates contextual answers from the retrieved information.
+The Streamlit application (`query-wikipedia`) provides an interactive UI for querying this knowledge base. It orchestrates a sophisticated two-phase search using Snowflake Cortex - first querying structured data, then using those results as filters for semantic search through text embeddings. This hybrid approach delivers highly relevant results that OpenAI GPT-4 transforms into natural language answers.
 
-The applications are written in pure Python with Tensorlake's automatic function orchestration - no Airflow, no Kafka, no complex infrastructure needed. The extraction application builds your knowledge base incrementally, while the query application provides instant answers. Each component handles its specialized task: BeautifulSoup for web scraping, Tensorlake for HTML parsing and information extraction, Snowflake for structured and vector storage with Cortex Search, and OpenAI for natural language generation.
+The Tensorlake extraction app runs serverlessly with automatic orchestration - no infrastructure management needed. The Streamlit app provides a user-friendly interface that data teams can customize and extend. Together, they create a powerful system where Tensorlake handles the heavy lifting of data extraction while Streamlit delivers an elegant query experience.
 
 Try out the [code here](./query-wikipedia).
 

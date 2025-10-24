@@ -1,57 +1,88 @@
 # Wikipedia Knowledge Base with Tensorlake + Snowflake + OpenAI
 
-This example demonstrates how to build an intelligent Q&A system that uses Tensorlake's data processing capabilities to parse and chunk Wikipedia articles, stores them in Snowflake with Cortex Search, and generates answers using OpenAI's GPT-4.
+This example demonstrates a two-application system that builds and queries an intelligent Wikipedia knowledge base. The first app extracts structured data and summaries from Wikipedia pages, while the second provides natural language Q&A using hybrid search.
 
 **NOTE: A full working example is coming soon**
 
 ## Overview
 
-This Tensorlake application showcases a complete RAG pipeline with best-in-class tools:
+This Tensorlake solution consists of two complementary applications:
 
-1. **`query-wikipedia.py`** - Intelligent Wikipedia knowledge base that:
-   - Uses OpenAI GPT-4 to identify the most relevant Wikipedia article
-   - Fetches articles and uses **Tensorlake DocumentAI** for intelligent parsing and chunking
-   - Stores structured chunks in Snowflake with metadata
-   - Performs retrieval using **Snowflake Cortex Search** (with fallback options)
-   - Generates accurate answers using **OpenAI GPT-4** with retrieved context
+### 1. `extract-wikipedia.py` - Knowledge Base Builder
+- Accepts a Wikipedia page type (e.g., "actors", "scientists", "companies")
+- Uses **BeautifulSoup** and **Requests** to crawl and fetch HTML from relevant Wikipedia pages
+- Leverages **Tensorlake DocumentAI** to parse HTML and extract:
+  - Structured data (dates, locations, career milestones)
+  - Key events and summaries
+  - Biographical or historical information
+- Stores everything in Snowflake with:
+  - Structured data tables for factual information
+  - Text embeddings for semantic search
+
+### 2. `query-wikipedia.py` - Intelligent Q&A System
+- Accepts natural language queries
+- Performs **hybrid search** using Snowflake Cortex:
+  - First: Queries structured data for factual filtering
+  - Then: Uses results to refine semantic search through embeddings
+- Generates contextual answers using **OpenAI GPT-4**
 
 ## Architecture
-
-- **Article Selection**: OpenAI identifies the best Wikipedia article for any query
-- **Document Processing**: Tensorlake DocumentAI handles parsing and chunking
-- **Storage & Search**: Snowflake stores chunks with Cortex Search for intelligent retrieval
-- **Answer Generation**: OpenAI GPT-4 generates contextual answers from retrieved chunks
-- **Persistent Knowledge**: Each query enriches your searchable knowledge base
-
-## How It Works
 ```
-User Query → OpenAI (topic extraction) → Wikipedia API → Tensorlake (parsing & chunking) 
-→ Snowflake (storage) → Cortex Search (retrieval) → OpenAI (answer generation) → Response
+EXTRACTION PIPELINE:
+Wikipedia Lists → BeautifulSoup (crawl) → Requests (fetch HTML) → Tensorlake (parse & extract)
+→ Snowflake (structured data + embeddings)
+
+QUERY PIPELINE:
+User Query → Snowflake Cortex (structured query) → Cortex Search (filtered semantic search)
+→ OpenAI GPT-4 (answer generation) → Response
 ```
 
-![A diagram outlining the entire pipeline of the APplication](./Snowflake_Wikipedia_Diagram.png)
+![A diagram outlining the entire pipeline of the Application](./Snowflake_Wikipedia_Diagram.png)
 
-## Example Queries
+## Example Usage
 
-- "How do snowflakes form in the atmosphere?"
-- "What causes volcanic eruptions?"
-- "Explain quantum entanglement"
-- "How does photosynthesis work in plants?"
+### Building the Knowledge Base
+```python
+# Extract all actors' information
+extract_wikipedia("actors")
+
+# Extract scientists' data
+extract_wikipedia("scientists")
+
+# Extract companies' information
+extract_wikipedia("companies")
+```
+
+### Querying the Knowledge Base
+```python
+# Query examples
+"What are some key moments in early life that famous movie stars share?"
+"Which actors were born in the 1960s and started in theater?"
+"Who transitioned from comedy to dramatic roles in their 30s?"
+"What actors have birthdays in December?"
+```
+
+## Key Features
+
+- **Intelligent Extraction**: Tensorlake DocumentAI understands HTML structure and extracts both facts and narratives
+- **Hybrid Search**: Combines structured queries with semantic search for superior relevance
+- **Incremental Building**: Add new Wikipedia categories anytime to expand your knowledge base
+- **Production Ready**: Handles pagination, rate limiting, and errors gracefully
 
 ## Getting Started
 
 ### Prerequisites
 
-- Tensorlake API key (for document processing)
-- OpenAI API key (for LLM capabilities)
-- Snowflake account with credentials
+- Tensorlake API key (for HTML parsing and extraction)
+- OpenAI API key (for answer generation)
+- Snowflake account with Cortex enabled
 - Python 3.11+
 
 ### Local Testing
 
 #### 1. Install Dependencies
 ```bash
-pip install --upgrade tensorlake snowflake-connector-python wikipedia openai
+pip install --upgrade tensorlake snowflake-connector-python openai beautifulsoup4 requests
 ```
 
 #### 2. Set Environment Variables
@@ -66,9 +97,15 @@ export SNOWFLAKE_DATABASE=WIKIPEDIA_KB
 export SNOWFLAKE_SCHEMA=ARTICLES
 ```
 
-#### 3. Run a Query
+#### 3. Build Knowledge Base
 ```bash
-python query-wikipedia.py
+# Extract actor data
+python extract-wikipedia.py --type actors --limit 100
+```
+
+#### 4. Query the System
+```bash
+python query-wikipedia.py --query "Which actors born in the 1980s won Academy Awards?"
 ```
 
 ### Deploying to Tensorlake Cloud
@@ -78,34 +115,53 @@ python query-wikipedia.py
 tensorlake secrets set TENSORLAKE_API_KEY='YOUR_TENSORLAKE_API_KEY'
 tensorlake secrets set OPENAI_API_KEY='YOUR_OPENAI_API_KEY'
 tensorlake secrets set SNOWFLAKE_ACCOUNT='YOUR_SNOWFLAKE_ACCOUNT'
-tensorlake secrets set SNOWFLAKE_USER='YOUR_SNOWFLAKE_USER'  
+tensorlake secrets set SNOWFLAKE_USER='YOUR_SNOWFLAKE_USER'
 tensorlake secrets set SNOWFLAKE_PASSWORD='YOUR_SNOWFLAKE_PASSWORD'
 tensorlake secrets set SNOWFLAKE_WAREHOUSE='COMPUTE_WH'
 tensorlake secrets set SNOWFLAKE_DATABASE='WIKIPEDIA_KB'
 tensorlake secrets set SNOWFLAKE_SCHEMA='ARTICLES'
 ```
 
-#### 2. Deploy Application
+#### 2. Deploy Applications
 ```bash
+tensorlake deploy extract-wikipedia.py
 tensorlake deploy query-wikipedia.py
 ```
 
-#### 3. Query via API
+#### 3. Use via API
+
+Extract Wikipedia data:
+```bash
+curl -X POST https://api.tensorlake.ai/applications/extract-wikipedia \
+  -H "Authorization: Bearer YOUR_TENSORLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"page_type": "actors", "limit": 50}'
+```
+
+Query the knowledge base:
 ```bash
 curl -X POST https://api.tensorlake.ai/applications/query-wikipedia \
   -H "Authorization: Bearer YOUR_TENSORLAKE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"query": "How do snowflakes form?"}'
+  -d '{"query": "What early life experiences do famous actors share?"}'
 ```
 
-## Key Features
+## How It Works
 
-- **Intelligent Document Processing**: Tensorlake DocumentAI provides superior parsing that preserves semantic meaning
-- **Flexible Search**: Automatically uses Cortex Search when available, falls back to text search
-- **Growing Knowledge Base**: Each query adds to your persistent Wikipedia knowledge base
-- **Production Ready**: Handles errors gracefully with multiple fallback strategies
+### Extraction Process
+1. **Page Discovery**: BeautifulSoup crawls Wikipedia list pages to find individual article URLs
+2. **HTML Fetching**: Requests library downloads full HTML content
+3. **Intelligent Parsing**: Tensorlake DocumentAI extracts structured data and summaries
+4. **Dual Storage**: Snowflake stores both structured facts and searchable text embeddings
+
+### Query Process
+1. **Structured Filtering**: Cortex first queries factual data (dates, locations, categories)
+2. **Semantic Search**: Uses structured results to filter embedding search for relevant text
+3. **Context Retrieval**: Combines factual and semantic results for comprehensive context
+4. **Answer Generation**: OpenAI GPT-4 synthesizes natural language response
 
 ## Files
 
-- `query-wikipedia.py` - Main application orchestrating the entire pipeline
+- `extract-wikipedia.py` - Extraction application for building knowledge base
+- `query-wikipedia.py` - Query application for Q&A
 - `README.md` - This file

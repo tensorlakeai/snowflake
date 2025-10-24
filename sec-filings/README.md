@@ -13,6 +13,8 @@ The example processes 10 SEC filings across 4 companies to identify and categori
 
 You can try this example out using [this Colab Notebook](https://tlake.link/notebooks/snowflake-applications) as well, just make sure to add the two files (`process-sec.py` and `query-sec.py`) to your Notebook environment before starting.
 
+![A diagram showing the pipeline for this Application](./Snowflake_SECFilings_Diagram.png)
+
 ## Available Queries
 
 - `0` - Risk category distribution

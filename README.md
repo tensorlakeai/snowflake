@@ -17,7 +17,7 @@
 
 ## Transform Unstructured Data into Queryable and AI Ready Data on Snowflake
 
-Tensorlake is a serverless platform for building data applications and agents in Python that can ingest and transform unstructured data before landing them in Snowflake's SQL database or Cortex Search Engine. This is an alternative to perform ETL orchestration with SQL expressions and UDF functions. 
+Tensorlake is a serverless platform for building data applications and agents in Python that can ingest and transform unstructured data before landing them in Snowflake's SQL database or Cortex Search Engine. Building orchestration and ingestion on Tensorlake allows building complex distributed applictions in Python, where the orchestration and compute logic live together. This is an alternative to building orchestration with SQL and keeping compute logic in Snowflake Table Functions.  
 
 Tensorlake's applications automatically behave like durable queues so you wouldn't need to setup Kafka or other queues to manage ingestion. The clusters automatically scales up as data is ingested to process them.
 

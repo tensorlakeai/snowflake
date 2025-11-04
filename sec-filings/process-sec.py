@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 import snowflake.connector
 from snowflake.connector.pandas_tools import write_pandas
 
-from tensorlake.applications import Image, application, function, cls, map
+from tensorlake.applications import Image, application, function, cls
 from tensorlake.documentai import (
     DocumentAI, PageClassConfig, 
     ParseResult, StructuredExtractionOptions
@@ -14,7 +14,7 @@ from tensorlake.documentai import (
 
 image = (
     Image(base_image="python:3.11-slim", name="snowflake-sec")
-    .run("pip install snowflake-connector-python pandas pyarrow")
+    .run("pip install snowflake snowflake-connector-python pandas pyarrow")
 )
 
 # Snowflake configuration - these should be set as secrets in production
@@ -88,7 +88,7 @@ def document_ingestion(document_urls: List[str]) -> None:
             print(f"Successfully classified {file_url}: {parse_id}")
         except Exception as e:
             print(f"Failed to classify document {file_url}: {e}")
-    results = synchronize(map(extract_structured_data, parse_ids.items()))
+    results = extract_structured_data.map(parse_ids.items())
 
     print(type(results))
 

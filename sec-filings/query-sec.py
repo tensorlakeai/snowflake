@@ -1,12 +1,8 @@
 import os
 import json
-from typing import List, Optional, Tuple, Any
-
-from pydantic import BaseModel, Field
 import snowflake.connector
-from snowflake.connector.pandas_tools import write_pandas
 
-from tensorlake.applications import Image, application, function, cls, RequestError, map
+from tensorlake.applications import Image, application, function, cls, RequestError
 
 image = (
     Image(base_image="python:3.11-slim", name="snowflake-sec")
@@ -27,7 +23,7 @@ SNOWFLAKE_CONFIG = {
 @function(
     image=image
 )
-def query_sec(query_choice):
+def query_sec(query_choice) -> str:
     # Risk category distribution - Default Query
   query = """
       SELECT 
